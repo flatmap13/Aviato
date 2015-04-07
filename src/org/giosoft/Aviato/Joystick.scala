@@ -1,4 +1,4 @@
-package org.giosoft.RxPatterns
+package org.giosoft.Aviato
 
 import android.graphics.{Color, Paint, Canvas}
 import android.view.{MotionEvent, View}

@@ -1,4 +1,4 @@
-package org.giosoft.RxPatterns;
+package org.giosoft.Aviato;
 
 import android.content.Context;
 import android.graphics.Canvas;
