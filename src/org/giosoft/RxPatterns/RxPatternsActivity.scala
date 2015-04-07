@@ -43,10 +43,11 @@ class RxPatternsView(ctx: Context) extends SurfaceView(ctx) with OnJoystickMoveL
 
   private val gameLoopThread = new GameLoopThread(this)
 
-  private lazy val enemyFrames = bitmaps("Red/Enemy_animation", -90)
-  private lazy val explosionFrames = bitmaps("Effects/Blue Effects", 0)
+  private lazy val enemyFrames = bitmaps("Red/Enemy_animation", -90, 0.15f)
+  private lazy val blueExplosionFrames = bitmaps("Effects/Blue Effects", 0, 0.2f)
+  private lazy val redExplosionFrames = bitmaps("Effects/Red Explosion", 0, 0.2f)
 
-  private lazy val player = new Player(this, bitmaps("Blue/Animation", 90), bitmaps("Blue/Bullet", 90))
+  private lazy val player = new Player(this, bitmaps("Blue/PlayerShip", 0, 0.2f), bitmaps("Blue/Bullet", 90, 0.02f))
   private lazy val enemies = collection.mutable.ListBuffer.fill(2){new Enemy(this, enemyFrames)}
   private lazy val stars = collection.mutable.ListBuffer.fill(26){new Star(getWidth, getHeight)}
   private val explosions = new mutable.ListBuffer[Explosion]
@@ -56,10 +57,10 @@ class RxPatternsView(ctx: Context) extends SurfaceView(ctx) with OnJoystickMoveL
     // TODO: pause game!
   }
 
-  def bitmaps(folder: String, angle: Float): Array[Bitmap] =
-    ctx.getAssets.list(folder).map(file => getBitmapFromAsset(folder + "/" + file, angle))
+  def bitmaps(folder: String, angle: Float, scale: Float): Array[Bitmap] =
+    ctx.getAssets.list(folder).map(file => getBitmapFromAsset(folder + "/" + file, angle, scale))
 
-  def getBitmapFromAsset(strName: String, angle: Float): Bitmap = {
+  def getBitmapFromAsset(strName: String, angle: Float, scale: Float): Bitmap = {
     var istr: InputStream = null
     try {
       istr = ctx.getAssets.open(strName)
@@ -69,17 +70,18 @@ class RxPatternsView(ctx: Context) extends SurfaceView(ctx) with OnJoystickMoveL
     val matrix = new Matrix()
     matrix.postRotate(angle)
     val raw = BitmapFactory.decodeStream(istr)
-    val ratio = raw.getHeight / raw.getWidth
-    val width = (getWidth * 0.2).toInt
+    val ratio = raw.getHeight.toDouble / raw.getWidth.toDouble
+    val width = getWidth * scale
     val height = width * ratio
-    val scaled = Bitmap.createScaledBitmap(raw, width, height, false)
+    val scaled = Bitmap.createScaledBitmap(raw, width.toInt, height.toInt, false)
     Bitmap.createBitmap(scaled, 0, 0, scaled.getWidth, scaled.getHeight, matrix, true)
   }
 
   getHolder.addCallback(new Callback {
     override def surfaceCreated(holder: SurfaceHolder): Unit = {
       // pre-load sprites & frames
-      explosionFrames
+      blueExplosionFrames
+      redExplosionFrames
       player
       enemies
       stars
@@ -105,7 +107,7 @@ class RxPatternsView(ctx: Context) extends SurfaceView(ctx) with OnJoystickMoveL
 
   override def onDraw(canvas: Canvas): Unit = {
 //    canvas.drawColor(Color.rgb(135,206,235))
-    canvas.drawColor(Color.rgb(40,40,40))
+    canvas.drawColor(Color.rgb(31,31,31))
 
     val starsPaint = new Paint()
     starsPaint.setColor(Color.WHITE)
@@ -116,12 +118,16 @@ class RxPatternsView(ctx: Context) extends SurfaceView(ctx) with OnJoystickMoveL
       canvas.drawPoint(p.x, p.y, starsPaint)
     })
 
-    val hitEnemies = enemies.filter(e => player.bullets.exists(b => e.collides(b)))
-    hitEnemies.foreach(e => {
-      explosions += new Explosion(e.x, e.y, this, explosionFrames)
-      enemies += new Enemy(this, enemyFrames)
-    })
-    enemies --= hitEnemies
+    val (fallen, survivors) = enemies.map(e => (e, player.bullets.find(_ collides e))).partition(_._2.isDefined)
+    fallen.foreach {
+      case (e, Some(b)) =>
+        explosions += new Explosion(b.x, b.y, this, blueExplosionFrames)
+        explosions += new Explosion(e.x, e.y, this, redExplosionFrames)
+        enemies += new Enemy(this, enemyFrames)
+        enemies -= e
+        player.bullets -= b
+      case _ =>
+    }
 
     explosions --= explosions.filter(!_.isLive)
 

@@ -87,7 +87,7 @@ class Enemy(view: RxPatternsView, frames: Array[Bitmap]) extends Sprite(view, fr
 class Bullet(xPos: Int, yPos: Int, view: RxPatternsView, frames: Array[Bitmap]) extends Sprite(view, frames) {
   x = xPos
   y = yPos
-  dx = 7
+  dx = (frames(currentFrame).getWidth * 0.5).toInt
 
   def isLive = x < view.getWidth
 
