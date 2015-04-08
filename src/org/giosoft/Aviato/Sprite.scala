@@ -1,4 +1,4 @@
-package org.giosoft.RxPatterns
+package org.giosoft.Aviato
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -6,7 +6,7 @@ import android.graphics.Canvas
 import scala.collection.mutable
 import scala.util.Random
 
-class Sprite(view: RxPatternsView, frames: Array[Bitmap]) {
+class Sprite(view: AviatoView, frames: Array[Bitmap]) {
   var x = 0
   var y = 0
   var dx = 0
@@ -34,7 +34,7 @@ class Sprite(view: RxPatternsView, frames: Array[Bitmap]) {
   def height = frames(currentFrame).getHeight
 }
 
-class Player(view: RxPatternsView, frames: Array[Bitmap], bulletFrames: Array[Bitmap]) extends Sprite(view, frames) {
+class Player(view: AviatoView, frames: Array[Bitmap], bulletFrames: Array[Bitmap]) extends Sprite(view, frames) {
   val bullets = mutable.ListBuffer[Bullet]()
   var lastFireTime = 0l
 
@@ -65,7 +65,7 @@ class Player(view: RxPatternsView, frames: Array[Bitmap], bulletFrames: Array[Bi
   }
 }
 
-class Enemy(view: RxPatternsView, frames: Array[Bitmap]) extends Sprite(view, frames) {
+class Enemy(view: AviatoView, frames: Array[Bitmap]) extends Sprite(view, frames) {
   init()
 
   def init(): Unit = {
@@ -84,7 +84,7 @@ class Enemy(view: RxPatternsView, frames: Array[Bitmap]) extends Sprite(view, fr
   }
 }
 
-class Bullet(xPos: Int, yPos: Int, view: RxPatternsView, frames: Array[Bitmap]) extends Sprite(view, frames) {
+class Bullet(xPos: Int, yPos: Int, view: AviatoView, frames: Array[Bitmap]) extends Sprite(view, frames) {
   x = xPos
   y = yPos
   dx = (frames(currentFrame).getWidth * 0.5).toInt
@@ -97,7 +97,7 @@ class Bullet(xPos: Int, yPos: Int, view: RxPatternsView, frames: Array[Bitmap]) 
   }
 }
 
-class Explosion(xPos: Int, yPos: Int, view: RxPatternsView, frames: Array[Bitmap]) extends Sprite(view, frames) {
+class Explosion(xPos: Int, yPos: Int, view: AviatoView, frames: Array[Bitmap]) extends Sprite(view, frames) {
   x = xPos
   y = yPos
 

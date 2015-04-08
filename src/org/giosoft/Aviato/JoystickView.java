@@ -1,4 +1,4 @@
-package org.giosoft.RxPatterns;
+package org.giosoft.Aviato;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -38,11 +38,6 @@ public class JoystickView extends View implements Runnable {
     private int lastAngle = 0;
     private int lastPower = 0;
 
-    private Paint buttonA;
-    private double buttonAx;
-    private double buttonAy;
-//    private Paint buttonB;
-
     public JoystickView(Context context) {
         super(context);
         initJoystickView();
@@ -80,11 +75,6 @@ public class JoystickView extends View implements Runnable {
         button.setColor(Color.RED);
         button.setAlpha(130);
         button.setStyle(Paint.Style.FILL);
-
-        buttonA = new Paint(Paint.ANTI_ALIAS_FLAG);
-        buttonA.setColor(Color.RED);
-        buttonA.setAlpha(130);
-        buttonA.setStyle(Paint.Style.FILL);
     }
 
     @Override
@@ -154,12 +144,6 @@ public class JoystickView extends View implements Runnable {
 
         // painting the move button
         canvas.drawCircle(xPosition, yPosition, buttonRadius, button);
-
-        buttonAx = 0.1f * getWidth();
-        buttonAy = centerY;
-
-        // paint fire button
-        canvas.drawCircle((float)buttonAx, (float)buttonAy, buttonRadius*2, buttonA);
     }
 
     @Override public void onWindowFocusChanged(boolean hasFocus) {
@@ -174,17 +158,19 @@ public class JoystickView extends View implements Runnable {
         xPosition = (int) event.getX();
         yPosition = (int) event.getY();
 
-        if (Math.sqrt((xPosition - buttonAx)*(xPosition - buttonAx) + (yPosition - buttonAy)*(yPosition - buttonAy))
-                <= buttonRadius * 2 ) {
-            onJoystickMoveListener.onButtonPressed(0);
-            return true;
-        }
+//        if (Math.sqrt((xPosition - buttonAx)*(xPosition - buttonAx) + (yPosition - buttonAy)*(yPosition - buttonAy))
+//                <= buttonRadius * 2 ) {
+//            onJoystickMoveListener.onButtonPressed(0);
+//            return true;
+//        }
 
         double abs = Math.sqrt((xPosition - centerX) * (xPosition - centerX)
                 + (yPosition - centerY) * (yPosition - centerY));
-        if (abs > joystickRadius) {
-            xPosition = (int) ((xPosition - centerX) * joystickRadius / abs + centerX);
-            yPosition = (int) ((yPosition - centerY) * joystickRadius / abs + centerY);
+        if (abs > joystickRadius * 1.5) {
+            onJoystickMoveListener.onButtonPressed(0);
+            return true;
+//            xPosition = (int) ((xPosition - centerX) * joystickRadius / abs + centerX);
+//            yPosition = (int) ((yPosition - centerY) * joystickRadius / abs + centerY);
         }
         invalidate();
         if (event.getAction() == MotionEvent.ACTION_UP) {

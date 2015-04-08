@@ -1,10 +1,10 @@
-package org.giosoft.RxPatterns
+package org.giosoft.Aviato
 
 import android.graphics.Canvas
 
 import scala.util.Try
 
-class GameLoopThread(view: RxPatternsView) extends Thread {
+class GameLoopThread(view: AviatoView) extends Thread {
   var running = false
   val FPS = 60l
 

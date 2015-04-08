@@ -1,4 +1,4 @@
-package org.giosoft.RxPatterns
+package org.giosoft.Aviato
 
 import java.io.{IOException, InputStream}
 import java.lang.Math._
@@ -11,12 +11,12 @@ import android.os.Bundle
 import android.view.SurfaceHolder.Callback
 import android.view._
 import android.widget.RelativeLayout
-import org.giosoft.RxPatterns.JoystickView.OnJoystickMoveListener
+import org.giosoft.Aviato.JoystickView.OnJoystickMoveListener
 
 import scala.collection.mutable
 import scala.util.Random
 
-class RxPatternsActivity extends Activity {
+class AviatoActivity extends Activity {
 
   override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
@@ -28,7 +28,7 @@ class RxPatternsActivity extends Activity {
 
     val layout = new RelativeLayout(this)
 
-    val mainView: RxPatternsView = new RxPatternsView(layout.getContext)
+    val mainView: AviatoView = new AviatoView(layout.getContext)
 
     val joystickView = new JoystickView(layout.getContext)
     joystickView.setOnJoystickMoveListener(mainView, JoystickView.DEFAULT_LOOP_INTERVAL)
@@ -39,7 +39,7 @@ class RxPatternsActivity extends Activity {
   }
 }
 
-class RxPatternsView(ctx: Context) extends SurfaceView(ctx) with OnJoystickMoveListener {
+class AviatoView(ctx: Context) extends SurfaceView(ctx) with OnJoystickMoveListener {
 
   private val gameLoopThread = new GameLoopThread(this)
 
